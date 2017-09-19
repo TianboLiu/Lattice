@@ -10,7 +10,7 @@ def genPDFs(filename, pdfset, flavor, Q, nlines):
     f.write("x\t")
     for i in range(nlines+1):
         f.write("%d\t" %i)
-        f.write("\n")
+    f.write("\n")
     pdflist = np.arange((nlines+2)*1000, dtype=np.float64).reshape(1000, nlines+2)
     xlist = 10**np.linspace(np.log10(2.035e-7), 0, 1000)
     for i in range(1000):
@@ -22,7 +22,7 @@ def genPDFs(filename, pdfset, flavor, Q, nlines):
     for i in range(1000):
         for j in range(nlines+2):
             f.write("%.6E\t" % pdflist[i,j])
-            f.write("\n")
+        f.write("\n")
     f.close()
     return
 
