@@ -14,11 +14,11 @@ def genPDFs(filename, pdfset, Q, Nsets):
         pdfs[i] = lhapdf.mkPDF(pdfset, i)
     X=np.linspace(0.005, 0.995, num=100, endpoint=True)
     for x in X:
-        xf = (pdfs[0].xfxQ(2, x, Q) - pdfs[0](-2, x, Q)) - (pdfs[0].xfxQ(1, x, Q) - pdfs[0](-1, x, Q))
+        xf = (pdfs[0].xfxQ(2, x, Q) - pdfs[0].xfxQ(-2, x, Q)) - (pdfs[0].xfxQ(1, x, Q) - pdfs[0].xfxQ(-1, x, Q))
         xfall = []
         for i in range(Nsets):
-            xfall.append(pdfs[i].xfxQ(2, x, Q) - pdfs[i](-2, x, Q)) - (pdfs[i].xfxQ(1, x, Q) - pdfs[i](-1, x, Q))
-        dxf = np.std(xfall)
+            xfall.append((pdfs[i].xfxQ(2, x, Q) - pdfs[i].xfxQ(-2, x, Q)) - (pdfs[i].xfxQ(1, x, Q) - pdfs[i].xfxQ(-1, x, Q)))
+        dxf = np.std(np.array(xfall))
         f.write("%.3E\t%.3E\t%.3E\n" % (x, xf, dxf))
     f.close()
     return
