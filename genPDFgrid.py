@@ -8,18 +8,26 @@ import lhapdf
 def genPDFs(filename, pdfset, Q, Nsets):
     f = open(filename, "w")
     f.write("%s\t %.1f\n" %(pdfset,Q))
-    f.write("x\t xf(uv-dv) dxf(uv-dv)\n")
+    f.write("x\t xf(uv)\t dxf(uv)\t xf(dv)\t dxf(dv)\t xf(uv-dv)\t dxf(uv-dv)\n")
     pdfs={}
     for i in range(Nsets):
         pdfs[i] = lhapdf.mkPDF(pdfset, i)
     X=np.linspace(0.005, 0.995, num=100, endpoint=True)
     for x in X:
-        xf = (pdfs[0].xfxQ(2, x, Q) - pdfs[0].xfxQ(-2, x, Q)) - (pdfs[0].xfxQ(1, x, Q) - pdfs[0].xfxQ(-1, x, Q))
+        xf = pdfs[0].xfxQ(2, x, Q) - pdfs[0].xfxQ(-2, x, Q) - pdfs[0].xfxQ(1, x, Q) + pdfs[0].xfxQ(-1, x, Q)
+        xfu = pdfs[0].xfxQ(2, x, Q) - pdfs[0].xfxQ(-2, x, Q)
+        xfd = pdfs[0].xfxQ(1, x, Q) - pdfs[0].xfxQ(-1, x, Q)
         xfall = []
+        xfallu = []
+        xfalld = []
         for i in range(Nsets):
             xfall.append((pdfs[i].xfxQ(2, x, Q) - pdfs[i].xfxQ(-2, x, Q)) - (pdfs[i].xfxQ(1, x, Q) - pdfs[i].xfxQ(-1, x, Q)))
+            xfallu.append(pdfs[i].xfxQ(2, x, Q) - pdfs[i].xfxQ(-2, x, Q))
+            xfalld.append(pdfs[i].xfxQ(1, x, Q) - pdfs[i].xfxQ(-1, x, Q))
         dxf = np.std(np.array(xfall))
-        f.write("%.3E\t%.3E\t%.3E\n" % (x, xf, dxf))
+        dxfu = np.std(np.array(xfallu))
+        dxfd = np.std(np.array(xfalld))
+        f.write("%.3E\t%.3E\t%.3E\t%.3E\t%.3E\t%.3E\t%.3E\n" % (x, xfu, dxfu, xfd, dxfd, xf, dxf))
     f.close()
     return
 
