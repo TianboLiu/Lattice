@@ -8,11 +8,11 @@ import lhapdf
 def genPDFs(filename, pdfset, Q, Nsets):
     f = open(filename, "w")
     f.write("%s\t %.1f\n" %(pdfset,Q))
-    f.write("x\t xf(uv)\t dxf(uv)\t xf(dv)\t dxf(dv)\t xf(uv-dv)\t dxf(uv-dv)\n")
+    f.write("x\t x*uv\t dx*uv\t x*dv\t dx*dv\t x*(uv-dv)\t dx*(uv-dv)\n")
     pdfs={}
     for i in range(Nsets):
         pdfs[i] = lhapdf.mkPDF(pdfset, i)
-    X=np.linspace(0.005, 0.995, num=100, endpoint=True)
+    X=np.linspace(0.0005, 0.9995, num=1000, endpoint=True)
     for x in X:
         xf = pdfs[0].xfxQ(2, x, Q) - pdfs[0].xfxQ(-2, x, Q) - pdfs[0].xfxQ(1, x, Q) + pdfs[0].xfxQ(-1, x, Q)
         xfu = pdfs[0].xfxQ(2, x, Q) - pdfs[0].xfxQ(-2, x, Q)
