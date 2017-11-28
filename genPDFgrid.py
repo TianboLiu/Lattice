@@ -12,7 +12,7 @@ def genPDFs(filename, pdfset, Q, Nsets):
     pdfs={}
     for i in range(Nsets):
         pdfs[i] = lhapdf.mkPDF(pdfset, i)
-    X=np.linspace(0.0005, 0.9995, num=1000, endpoint=True)
+    X=10**np.linspace(-4.0, 0.0, num=1000, endpoint=True)
     for x in X:
         xf = pdfs[0].xfxQ(2, x, Q) - pdfs[0].xfxQ(-2, x, Q) - pdfs[0].xfxQ(1, x, Q) + pdfs[0].xfxQ(-1, x, Q)
         xfu = pdfs[0].xfxQ(2, x, Q) - pdfs[0].xfxQ(-2, x, Q)
