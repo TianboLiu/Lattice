@@ -351,6 +351,42 @@ int Calculate_fssbar(TMatrixD Cov, double * cent){
   fclose(file);
   return 0;
 }
+
+int Calculate_moment(TMatrixD Cov, double * cent){
+  TMatrixDEigen eigen(Cov);
+  TMatrixD val = eigen.GetEigenValues();
+  TMatrixD vec = eigen.GetEigenVectors();
+  double pars[2] = {cent[0], cent[1]};
+  double pars1p[2] = {cent[0] + sqrt(val(0,0)) * vec(0,0),
+		      cent[1] + sqrt(val(0,0)) * vec(1,0)};
+  double pars1m[2] = {cent[0] - sqrt(val(0,0)) * vec(0,0),
+		      cent[1] - sqrt(val(0,0)) * vec(1,0)};
+  double pars2p[2] = {cent[0] + sqrt(val(1,1)) * vec(0,1),
+		      cent[1] + sqrt(val(1,1)) * vec(1,1)};
+  double pars2m[2] = {cent[0] - sqrt(val(1,1)) * vec(0,1),
+		      cent[1] - sqrt(val(1,1)) * vec(1,1)};
+  double x;
+  double X[1000];
+  double F = 0;
+  double F1p = 0;
+  double F1m = 0;
+  double F2p = 0;
+  double F2m = 0;
+  for (int i = 0; i < 1000; i++){
+    X[i] = 0.5 / 1000 + i / 1000.0;
+  }
+  for (int i = 0; i < 1000; i++){
+    x = X[i];
+    //cout << x << endl;
+    F += x * fssbar(x, pars) / 1000;
+    F1p += x * fssbar(x, pars1p) / 1000;
+    F1m += x * fssbar(x, pars1m) / 1000;
+    F2p += x * fssbar(x, pars2p) / 1000;
+    F2m += x * fssbar(x, pars2m) / 1000;
+  }
+  cout << "<xS->: " << F << "  +-  " << sqrt(pow(F1p - F1m, 2) + pow(F2p - F2m, 2)) / 2.0 << endl;
+  return 0;
+}
   
 
 ///////
@@ -385,7 +421,8 @@ int main(const int argc, const char * argv[]){
   TMatrixD Cov = Minimize(init, cent);
 
   Calculate_FFs(Cov, cent);
-  Calculate_fssbar(Cov, cent);
+  //Calculate_fssbar(Cov, cent);
+  Calculate_moment(Cov, cent);
 
   Cov.Print();
 
