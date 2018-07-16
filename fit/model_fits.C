@@ -211,7 +211,7 @@ int Calculate_FFs(TMatrixD Cov, double * cent){
   double Q2, F, dF;
   FILE * file = fopen("fs.dat", "w");
   fprintf(file, "Q2\tFs\tdFs\n");
-  for (int i = 0; i < 100; i++){
+  for (int i = 0; i < 1000; i++){
     Q2 = 0.01 * i;
     F = FFs(Q2, pars);
     dF = sqrt(pow(FFs(Q2, pars1p) - FFs(Q2, pars1m), 2) + pow(FFs(Q2, pars2p) - FFs(Q2, pars2m), 2)) / 2.0;
@@ -420,11 +420,23 @@ int main(const int argc, const char * argv[]){
 
   TMatrixD Cov = Minimize(init, cent);
 
-  Calculate_FFs(Cov, cent);
+  //Calculate_FFs(Cov, cent);
   //Calculate_fssbar(Cov, cent);
-  Calculate_moment(Cov, cent);
+  //Calculate_moment(Cov, cent);
 
-  Cov.Print();
+  //Cov.Print();
+
+  if (true){
+    double Nk[2] = {0.0127, 0.330};
+    Cov(0,0) = 1e-27;
+    Cov(0,1) = 0;
+    Cov(1,0) = 0;
+    Cov(1,1) = 1e-27;
+    Calculate_FFs(Cov, Nk);
+  }
+    
+
+    
 
   return 0;
 }
